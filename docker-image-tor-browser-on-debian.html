@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Tor Browser - Docker image based on Debian</title>
+<link rel="icon" type="image/png" sizes="32x32" href="layout/imgs/techDIY-favicon2-32x32.png">
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="layout/style.css" />
+</head>
+<body>
+	
+<div id="orientation-bar">
+	<span class="project-label">📄 docker-image-tor-browser-on-debian</span>
+	<span class="nav-hint">| <a href="home.html">home</a></span>
+</div>
+		
+  <div id="terminal">
+    <div id="banner-container">
+		
+      <pre id="banner">
+_______________________________________________
+ _____  ____  __    _          ___   _   _     
+  | |  | |_  / /`  | |_|  __  | | \ | | \ \_/  
+  |_|  |_|__ \_\_, |_| | (_() |_|_/ |_|  |_|   
+_______________________________________________
+      </pre>
+      
+<span class="ansi-cyan">Type 'help' to see available commands.</span><br />
+<span class="hint">You can use some terminal commands to navigate...</span>
+
+    </div><!-- /#banner-container -->
+    
+    <div id="output"></div>
+
+    <div class="input-line">
+      <span class="prompt">guest@techdiy:~$</span>
+      <input type="text" id="input" autofocus autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+    </div>
+
+<!-- Main static content for files/pages -->
+
+<div class="file-content">
+	<h2>Tor Browser based on Debian:bookworm-slim - <i>Docker image</i></h2>
+
+	<p>This Docker image provides a secure, isolated environment to run the <a href="https://www.torproject.org/" target="_blank" rel="noopener noreferrer">Tor Browser↗️</a>⁠.
+Tor Browser is designed to help protect your privacy online by anonymizing your web traffic and shielding your identity from network surveillance and traffic analysis. This image is built on top of "Debian:bookworm-slim" base image, ensuring a stable and secure environment.</p>
+
+	<h3>Key Features:</h3>
+
+	<p>&bull; <strong>Tor Browser:</strong> Pre-installed and configured to run over the Tor network for anonymous browsing.</p>
+	<p>&bull; <strong>Debian Base:</strong> Built on top of Debian bookworm-slim image.</p>
+	<p>&bull; <strong>Isolated Environment:</strong> Ensures that the Tor Browser runs in a sandboxed environment.</p>
+
+	<h3>Requirements:</h3>
+
+	<p>1. <q>Tor browser</q> needs to be downloaded manually, as for example <q>tor-project-linux-x86_64.5.7.tar.xz</q></p>
+	<blockquote>No need to install the tor browser via package manager !</blockquote>
+	
+	<p>2. <q>xhost</q> <i>(Utility to control X server access)</i> needs to be installed if you'll have error about it while running the script.</p>
+	<blockquote>(See the .sh script, line: `xhost +local:docker`)</blockquote>
+
+
+	<h3>Usage:</h3>
+
+	<p>👣 Create a folder <q>tor-browser-debian</q></p>
+	<p>👣 Place downloaded tor browser archive - <q>tor-project-linux-x86_64.5.7.tar.xz</q> into that folder</p>
+	<blockquote>No need to extract it !</blockquote>
+	
+	<p>👣 Rename the archive into <q>tor-browser.tar.xz</q> - IMPORTANT!</p>
+	<p>&bull; Make sure the folder name inside the archive is <q>tor-browser</q> and not for example <q>tor-browser_en_US</q> or so. - IMPORTANT!</p>
+	<blockquote>if so - you need to rename or extract, rename the folder as <q>tor-browser</q> and re-archive it as <q>tor-browser.tar.xz</q>. - IMPORTANT!</blockquote>
+	
+	<p>👣 Create two files in the same folder: <q>dockerfile</q> & <q>run-tor-browser.sh</q> with the code below...</p>
+	
+	<fieldset  class="file-block">
+		<legend>dockerfile:</legend>
+		<button class="copy-btn">Copy</button>
+	<pre  class="code-content">
+FROM debian:bookworm-slim
+
+# Install necessary dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    libasound2 \
+    libdbus-glib-1-2 \
+    libgtk-3-0 \
+    libx11-xcb1 \
+    libxt6 \
+    libpci3 \
+    xz-utils \
+    ffmpeg \
+    pulseaudio \
+    apt-utils \
+    curl \
+    libgl1-mesa-glx \
+    libegl1-mesa \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set the working directory
+WORKDIR /home/torbrowser
+
+# Copy the pre-downloaded tor-browser.tar.xz into the Docker image
+COPY tor-browser.tar.xz /home/torbrowser/
+
+# Extract the Tor Browser tarball
+RUN tar -xf tor-browser.tar.xz && \
+    rm tor-browser.tar.xz
+
+# Set the correct permissions for the torbrowser user
+RUN useradd -ms /bin/bash torbrowser
+RUN chown -R torbrowser:torbrowser /home/torbrowser
+
+# Switch to the torbrowser user
+USER torbrowser
+WORKDIR /home/torbrowser/tor-browser
+
+# Run the Tor Browser (without starting a new X server inside the container)
+ENTRYPOINT ["./start-tor-browser.desktop", "--verbose"]
+	</pre>
+	</fieldset>
+	
+	<fieldset  class="file-block">
+		<legend>run-tor-browser.sh:</legend>
+		<button class="copy-btn">Copy</button>
+	<pre  class="code-content">
+#!/bin/bash
+
+# Build the Docker image for Tor Browser if it doesn't already exist
+docker build -t dockerfos/tor-browser-debian .
+
+# Set the absolute path to your Tor Browser folder on the host
+TOR_BROWSER_DIR="$HOME/'dockerfos/tor-browser-debian'"
+
+# Allow Docker to access the X server for graphical applications
+echo "Granting local Docker access to X11 server..."
+xhost +local:docker
+
+# Check if DISPLAY variable is set (for X11 forwarding)
+if [ -z "$DISPLAY" ]; then
+    echo "DISPLAY variable is not set. Please ensure X11 is running."
+    exit 1
+fi
+
+# Check if the Docker image 'dockerfos/tor-browser-debian' exists
+if [[ "$(docker images -q dockerfos/tor-browser-debian 2> /dev/null)" == "" ]]; then
+    echo "Docker image 'dockerfos/tor-browser-debian' not found. Building the image..."
+    
+    # Build the Docker image using the pre-downloaded Tor Browser tarball
+    docker build -t dockerfos/tor-browser-debian .
+    
+    if [ $? -ne 0 ]; then
+        echo "Error occurred while building the Docker image."
+        exit 1
+    fi
+else
+    echo "Docker image 'dockerfos/tor-browser-debian' found."
+fi
+
+# Set up PulseAudio server and socket paths for the sound!
+PULSE_SERVER="unix:/run/user/$(id -u)/pulse/native"
+PULSE_SOCKET="/run/user/$(id -u)/pulse/native"
+PULSE_COOKIE="$HOME/.config/pulse/cookie"
+
+# Run the Docker container for Tor Browser
+echo "Running Tor Browser inside Docker..."
+docker run -e DISPLAY=$DISPLAY \
+    -e PULSE_SERVER="$PULSE_SERVER" \
+    -v /tmp/.X11-unix:/tmp/.X11-unix \
+    -v "$PULSE_SOCKET:$PULSE_SOCKET" \
+    -v "$PULSE_COOKIE:/root/.config/pulse/cookie:ro" \
+    dockerfos/tor-browser-debian
+
+# Optionally revoke access after the container stops (for security reasons)
+echo "Revoking Docker access to X11 server..."
+xhost -local:docker
+	</pre>
+	</fieldset>
+	
+	<p>👣 Make <q>run-tor-browser.sh</q> executable:</p>
+	<code>chmod +x run-tor-browser.sh</code>
+	
+	<p>👣 No need to build the image - just run the script:</p>
+	<code>./run-tor-browser.sh</code>
+	
+	<h3>💡 Security Considerations:</h3>
+	
+	<p>&bull; This container is designed to run in a sandboxed environment with minimal exposure to the host system.</p>
+
+    <p>&bull; It's recommended to run this image using non-privileged user permissions and limit access to sensitive directories.</p>
+	
+	<h3>⚠️ Disclaimer:</h3>
+	<p>This Docker image is provided as-is, without any warranties or guarantees of any kind. Use of this image is entirely at your own risk.</p>
+	
+	<hr />
+	
+	<p>🐳 DockerHub: <a href="https://hub.docker.com/repository/docker/dockerfos/tor-browser-debian/general" target="_blank" rel="noopener noreferrer">See on DockerHub↗️</a></p>
+	
+	<p>🦊 Gitlab: <a href="https://gitlab.com/docker-group5151917/docker-projects" target="_blank" rel="noopener noreferrer">See on Gitlab↗️</a></p>
+		
+</div><!-- /.file-content -->
+    
+    <button id="scrollTopBtn">Top &#x2B06;</button>
+	
+  </div><!-- /#terminal -->
+
+<script src="layout/script.js"></script> 
+<script src="layout/scroller.js"></script> 
+<script src="layout/codeBlockCopier.js"></script>
+
+</body>
+</html>
+

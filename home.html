@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Home/</title>
+<link rel="icon" type="image/png" sizes="32x32" href="layout/imgs/techDIY-favicon2-32x32.png">
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="/layout/style.css" />
+</head>
+<body>
+  
+<div id="terminal">
+	<div id="banner-container">
+		
+		<pre id="banner">
+_______________________________________________
+ _____  ____  __    _          ___   _   _     
+  | |  | |_  / /`  | |_|  __  | | \ | | \ \_/  
+  |_|  |_|__ \_\_, |_| | (_() |_|_/ |_|  |_|   
+_______________________________________________
+		</pre>
+		
+<h1>Welcome to Tech-DIY!</h1>
+<span class="ansi-cyan">Type 'help' to see available commands.</span><br />
+<span class="hint">You can use some terminal commands to navigate...</span>
+
+    </div><!-- /#banner-container -->
+           
+    <div id="output"></div>
+
+    <div class="input-line">
+      <span class="prompt">guest@techdiy:~$</span>
+      <input type="text" id="input" autofocus autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+    </div>
+   
+</div><!-- /#terminal -->
+
+<script src="layout/script.js"></script>
+</body>
+</html>

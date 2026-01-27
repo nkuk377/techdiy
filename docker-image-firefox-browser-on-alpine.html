@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Firefox Browser - Docker image based on Alpine</title>
+<link rel="icon" type="image/png" sizes="32x32" href="layout/imgs/techDIY-favicon2-32x32.png">
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="layout/style.css" />
+</head>
+<body>
+	
+<div id="orientation-bar">
+	<span class="project-label">📄 docker-image-firefox-browser-on-alpine</span>
+	<span class="nav-hint">| <a href="home.html">home</a></span>
+</div>
+	
+	
+  <div id="terminal">
+    <div id="banner-container">
+      <pre id="banner">
+_______________________________________________
+ _____  ____  __    _          ___   _   _     
+  | |  | |_  / /`  | |_|  __  | | \ | | \ \_/  
+  |_|  |_|__ \_\_, |_| | (_() |_|_/ |_|  |_|   
+_______________________________________________
+		</pre>
+		
+<span class="ansi-cyan">Type 'help' to see available commands.</span><br />
+<span class="hint">You can use some terminal commands to navigate...</span>
+
+    </div><!-- /#banner-container -->
+    
+    <div id="output"></div>
+
+    <div class="input-line">
+      <span class="prompt">guest@techdiy:~$</span>
+      <input type="text" id="input" autofocus autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+    </div>
+
+<!-- Main static content for files/pages -->
+
+<div class="file-content">
+	<h2>Firefox Browser based on Alpine Linux - <i>Docker image</i></h2>
+
+	<p>This Docker image provides a lightweight and secure environment to run the "Firefox Browser" Based on "Alpine Linux", it is designed for users who prioritize speed and efficiency while maintaining privacy and security while browsing the web.</p>
+
+	<h3>Requirements:</h3>
+
+	<p>1. Docker: Ensure Docker is installed on your system.</p>
+	<p>2. X11 Server: You need to have an X11 server running for the graphical interface.</p>
+
+	<h3>Usage:</h3>
+
+	<p>👣 Create a folder <q>firefox-alpine</q></p>
+	<p>👣 Create two files in that folder: <q>dockerfile</q> & <q>run-firefox.sh</q> with the code below...</p>
+	
+	
+	<fieldset  class="file-block">
+		<legend>dockerfile:</legend>
+		<button class="copy-btn">Copy</button>
+	<pre  class="code-content">
+# Use the Alpine base image
+FROM alpine:latest
+
+# Install Firefox, X11, and other necessary dependencies
+RUN apk update && apk add --no-cache \
+    firefox \
+    dbus \
+    ttf-dejavu \
+    font-noto \
+    xvfb \
+    xauth \
+    bash \
+    ffmpeg \
+    pulseaudio \
+    mesa-gl \
+    dbus-glib
+
+# Install glibc from sgerrand, ensuring there is no conflict with nsswitch.conf
+RUN apk --no-cache add --virtual .build-deps curl ca-certificates && \
+    curl -Lo /etc/apk/keys/sgerrand.rsa.pub https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub && \
+    curl -Lo glibc-2.35-r0.apk https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.35-r0/glibc-2.35-r0.apk && \
+    # Backup existing nsswitch.conf to avoid conflict
+    cp /etc/nsswitch.conf /etc/nsswitch.conf.bak || true && \
+    apk add --force-overwrite glibc-2.35-r0.apk && \
+    # Restore the original nsswitch.conf if needed
+    cp /etc/nsswitch.conf.bak /etc/nsswitch.conf || true && \
+    rm -f glibc-2.35-r0.apk && \
+    apk del .build-deps
+
+# Add a non-root user for running Firefox
+RUN adduser -D nonrootuser
+
+# Switch to the non-root user
+USER nonrootuser
+
+# Set the environment variable to forward the X display
+ENV DISPLAY=:99
+
+# Create a startup script to run Firefox with Xvfb
+RUN echo -e '#!/bin/bash\n\
+Xvfb :99 -screen 0 1280x1024x16 &\n\
+firefox' > /home/nonrootuser/start-firefox.sh
+
+# Make the script executable
+RUN chmod +x /home/nonrootuser/start-firefox.sh
+
+# Set the entrypoint to start the script
+ENTRYPOINT ["/bin/bash", "/home/nonrootuser/start-firefox.sh"]
+	</pre>
+	</fieldset>
+	
+	<fieldset  class="file-block">
+		<legend>run-firefox.sh:</legend>
+		<button class="copy-btn">Copy</button>
+	<pre  class="code-content">
+#!/bin/bash
+
+# Build the Docker image for Firefox Browser if it doesn't already exist
+docker build -t dockerfos/firefox-alpine .
+
+# Ensure the X11 socket is shared with the container
+# Allow local docker to access the X server
+xhost +local:docker
+
+# Set up PulseAudio server and socket paths for the sound!
+PULSE_SERVER="unix:/run/user/$(id -u)/pulse/native"
+PULSE_SOCKET="/run/user/$(id -u)/pulse/native"
+PULSE_COOKIE="$HOME/.config/pulse/cookie"
+
+# Run the Firefox container with X11 forwarding
+docker run -it \
+  -e DISPLAY=$DISPLAY \
+  -e PULSE_SERVER="$PULSE_SERVER" \
+  -v /tmp/.X11-unix:/tmp/.X11-unix \
+  -v "$PULSE_SOCKET:$PULSE_SOCKET" \
+  -v "$PULSE_COOKIE:/root/.config/pulse/cookie:ro" \
+  dockerfos/firefox-alpine
+
+# Optionally revoke access after the container stops (for security reasons)
+echo "Revoking Docker access to X11 server..."
+xhost -local:docker
+	</pre>
+	</fieldset>
+	
+	<p>👣 Make <q>run-firefox.sh</q> executable:</p>
+	<code>chmod +x run-firefox.sh</code>
+	
+	<p>👣 No need to build the image - just run the script:</p>
+	<code>./run-firefox.sh</code>
+	
+	<h3>💡 Notes:</h3>
+	
+	<p>&bull; <strong>Not for Root Use:</strong> This image is not intended to be run as the root user for security reasons!</p>
+	
+	<h3>⚠️ Disclaimer:</h3>
+	<p>This Docker image is provided as-is, without any warranties or guarantees of any kind. Use of this image is entirely at your own risk.</p>
+	
+	<hr />
+	
+	<p>🐳 DockerHub: <a href="https://hub.docker.com/repository/docker/dockerfos/firefox-alpine/general" target="_blank" rel="noopener noreferrer">See on DockerHub↗️</a></p>
+	
+	<p>🦊 Gitlab: <a href="https://gitlab.com/docker-group5151917/firefox-on-alpine-docker" target="_blank" rel="noopener noreferrer">See on Gitlab↗️</a></p>
+		
+</div><!-- /.file-content -->
+    
+    <button id="scrollTopBtn">Top &#x2B06;</button>
+	
+  </div><!-- /#terminal -->
+
+<script src="layout/script.js"></script> 
+<script src="layout/scroller.js"></script> 
+<script src="layout/codeBlockCopier.js"></script>
+
+</body>
+</html>
+

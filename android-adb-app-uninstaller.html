@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Android ADB app uninstaller</title>
+<link rel="icon" type="image/png" sizes="32x32" href="layout/imgs/techDIY-favicon2-32x32.png">
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="layout/style.css" />
+</head>
+<body>
+	
+<div id="orientation-bar">
+	<span class="project-label">📄 android-adb-app-uninstaller</span>
+	<span class="nav-hint">| <a href="home.html">home</a></span>
+</div>
+	
+	
+  <div id="terminal">
+    <div id="banner-container">
+      <pre id="banner">
+_______________________________________________
+ _____  ____  __    _          ___   _   _     
+  | |  | |_  / /`  | |_|  __  | | \ | | \ \_/  
+  |_|  |_|__ \_\_, |_| | (_() |_|_/ |_|  |_|   
+_______________________________________________
+		</pre>
+		
+<span class="ansi-cyan">Type 'help' to see available commands.</span><br />
+<span class="hint">You can use some terminal commands to navigate...</span>
+
+    </div><!-- /#banner-container -->
+    
+    <div id="output"></div>
+
+    <div class="input-line">
+      <span class="prompt">guest@techdiy:~$</span>
+      <input type="text" id="input" autofocus autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+    </div>
+
+<!-- Main static content for files/pages -->
+
+<div class="file-content">
+	<h2>Android ADB <i>(Android Debug Bridge)</i> to uninstall persistant apps from system</h2>
+
+	<p>This script is for uninstalling any application from your Android device, even (mostly) those defaults <q>don't want to come off</q>. <i>(de-bloat the device).</i></p>
+
+	<p>The script is interactive w/ <strong>fuzzing</strong> app search capabilities.</p>
+
+	<h3>Before get started</h3>
+
+	<p class="warning">⚠️ WARNING</p>
+	<p class="warning">This tool is for advanced users, please make sure you understand what this tool does before using. It can break your operating system !!</p>
+	<p><i>(Please, read the message at the end of this page).</i></p>
+	
+	<hr />
+	
+	<h3>On your Android device you need to:</h3>
+	
+	<p>👣 Activate the <strong>Developer options</strong></p>
+	<p>👣 Enable <strong>USB debugging</strong> <i>(from the "Developer options" menu)</i></p>
+	
+	<h3>On your computer:</h3>
+
+	<p>👣 Need to install:</p>
+	<p>1. <q>adb</q> tools <i>(check in your distro's repository)</i></q></p>
+	<p>2. <q>fzf</q> package if not installed, for the <strong>fuzzing search </strong>functionality.</p>
+	<p>👣 Create file <q>adb-app-uninstaller.sh</q> <i>(can use the name you wish here)</i></p>
+	
+	<fieldset  class="file-block">
+		<legend>adb-app-uninstaller.sh:</legend>
+		<button class="copy-btn">Copy</button>
+	<pre  class="code-content">
+#!/bin/bash
+
+# Check for dependencies
+if ! command -v adb &> /dev/null; then
+    echo "adb not found. Please install Android Platform Tools."
+    exit 1
+fi
+
+if ! command -v fzf &> /dev/null; then
+    echo "fzf not found. Please install it (e.g., 'sudo apt install fzf' or 'brew install fzf')."
+    exit 1
+fi
+
+# Wait for device
+echo "Waiting for device..."
+adb wait-for-device
+
+# Verify device is connected
+if ! adb get-state | grep -q "device"; then
+    echo "No device detected. Make sure USB debugging is enabled."
+    exit 1
+fi
+
+while true; do
+    echo -e "\nFetching all apps (user + system)..."
+    mapfile -t packages < <(adb shell pm list packages | sed 's/package://')
+
+    if [ ${#packages[@]} -eq 0 ]; then
+        echo "No apps found."
+        exit 0
+    fi
+
+    echo "Type to filter, press Enter to select, or Ctrl+C to quit."
+    selected_pkg=$(printf "%s\n" "${packages[@]}" | fzf --prompt="Uninstall> ")
+# Strip carriage return (and trailing spaces just in case)
+	selected_pkg=$(echo "$selected_pkg" | tr -d '\r')
+
+    if [ -z "$selected_pkg" ]; then
+        echo "No package selected. Exiting."
+        exit 0
+    fi
+
+    echo "You selected: $selected_pkg"
+    read -p "Are you sure you want to uninstall it? (y/N): " confirm
+
+    if [[ "$confirm" == "y" || "$confirm" == "Y" ]]; then
+        adb shell pm uninstall --user 0 "$selected_pkg" && echo "Uninstalled $selected_pkg." || echo "Failed to uninstall $selected_pkg."
+    else
+        echo "Skipped."
+    fi
+done
+	</pre>
+	</fieldset>
+	
+
+	
+	<p>👣 Make the file executable:</p>
+	<code>chmod +x adb-app-uninstaller.sh</code>
+	
+	<p>👣 Connect the Android device to your PC via USB cable and check if it's visible with: <strong>adb devices</strong> command from terminal</p>
+	
+	<p>👣 Run the script</p>	
+	
+<hr />	
+	
+	<h3>💡 Notes:</h3>
+	
+	<p>If you are not sure about the app's full name you want to remove, you can install the app <q>Apk info</q> beforehand from Google store <i>(the icon is a bright red circle with white <strong>APK</strong> in the middle)</i></p>
+	
+	<h3 class="warning">⚠️ Disclaimer:</h3>
+	<p class="warning">This script is provided as-is, without any warranties or guarantees of any kind. Use of this at your own risk.</p>
+	
+	<hr />
+	
+	<p>🦊 Gitlab: <a href="https://gitlab.com/android4610324/adb-app-uninstaller" target="_blank" rel="noopener noreferrer">See on Gitlab↗️</a></p>
+		
+</div><!-- /.file-content -->
+    
+    <button id="scrollTopBtn">Top &#x2B06;</button>
+	
+  </div><!-- /#terminal -->
+
+<script src="layout/script.js"></script> 
+<script src="layout/scroller.js"></script> 
+<script src="layout/codeBlockCopier.js"></script>
+
+</body>
+</html>
+

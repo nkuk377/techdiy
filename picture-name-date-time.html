@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Corrupted files finder</title>
+<link rel="icon" type="image/png" sizes="32x32" href="layout/imgs/techDIY-favicon2-32x32.png">
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="layout/style.css" />
+</head>
+<body>
+	
+<div id="orientation-bar">
+	<span class="project-label">📄 picture-name-date-time</span>
+	<span class="nav-hint">| <a href="home.html">home</a></span>
+</div>
+	
+	
+  <div id="terminal">
+    <div id="banner-container">
+      <pre id="banner">
+_______________________________________________
+ _____  ____  __    _          ___   _   _     
+  | |  | |_  / /`  | |_|  __  | | \ | | \ \_/  
+  |_|  |_|__ \_\_, |_| | (_() |_|_/ |_|  |_|   
+_______________________________________________
+		</pre>
+		
+<span class="ansi-cyan">Type 'help' to see available commands.</span><br />
+<span class="hint">You can use some terminal commands to navigate...</span>
+
+    </div><!-- /#banner-container -->
+    
+    <div id="output"></div>
+
+    <div class="input-line">
+      <span class="prompt">guest@techdiy:~$</span>
+      <input type="text" id="input" autofocus autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+    </div>
+
+<!-- Main static content for files/pages -->
+
+<div class="file-content">
+	<h2>Automated Image Renamer with Original Creation Date & time</h2>
+	
+	<h3>Script Description</h3>
+
+	<p>This Bash script is a simple yet powerful automation tool that renames multiple image files in a folder by adding each file’s <strong>original creation date and time</strong> <i>(from its EXIF metadata)</i> to the filename. Instead of renaming photos manually, the script processes all images at once, making it easy to keep large photo collections organized and consistently labeled.</p>
+
+	<p>By pulling the actual date and time each picture was taken, the script ensures your filenames reflect the true capture moment — not when the file was copied or edited. This makes it especially useful for <strong>backing up, archiving, or sorting images chronologically</strong>, whether they come from phones, cameras, or different devices.</p>
+	
+	<p>Although originally inspired by the needs of photographers, this script is designed for <strong>anyone who wants better photo organisation</strong> — from casual users managing family albums to professionals keeping structured backups.</p>
+	
+	
+	<h3>Key features include</h3>
+		
+	<ul>
+		<li>Automated renaming of multiple image files at once</li>
+		<li>Extraction of true creation timestamps from EXIF metadata</li>
+		<li>Safe, non-destructive file handling</li>
+		<li>Clear and consistent naming format for easier sorting and backup</li>
+	</ul>
+	
+	<p>In short, this script saves time, removes the hassle of manual renaming, and helps you maintain a tidy, well-organized image library — automatically.</p>
+
+	<h3>Requirements</h3>
+	
+	<p>need to install <q>exiftool</q> - find how to install in on your distro.</p>
+	
+	<h3>Here's the script</h3>
+	
+	<fieldset  class="file-block">
+		<legend>picture-name-date-time.sh:</legend>
+		<button class="copy-btn">Copy</button>
+	<pre  class="code-content">
+#!/bin/bash
+
+# Script extracts the original creation date/time from images..
+# ..and appends to the file name. (adapt it to your needs)
+# (Add your pictures' extension if not listed on the very first line of the code)
+# Use it on multiple files in the folder at once.
+# Requires `exiftool` (install with: sudo apt install perl-image-exiftool)
+# For farther manipulation you can use next apps to achieve the final result:
+# 1. `fdupes` (CLI) - to find and delete duplicated files before use this script
+# 2. `GPRename` (GUI) - powerful tool w/ lot of options to rename multiple files
+# NOTE: If you have error: "No DateTimeOriginal found.." - comment the line 19 and
+# ..un-comment the next line below (20)!
+
+for img in *.jpg *.jpeg *.png; do
+    # Skip if no matching files
+    [ -e "$img" ] || continue
+
+    # Extract the original date/time (from EXIF)
+    datetime=$(exiftool -d "%Y%m%d%H%M%S" -DateTimeOriginal -s3 "$img")
+	#datetime=$(exiftool -d "%Y%m%d%H%M%S" -MediaCreateDate -s3 "$img")
+
+    if [ -n "$datetime" ]; then
+        # Get base name without extension
+        base="${img%.*}"
+        ext="${img##*.}"
+
+        # Construct new filename
+        newname="${base}_${datetime}.${ext}"
+
+        # Rename file (avoid overwriting existing files)
+        if [ -e "$newname" ]; then
+            echo "Skipping $img → $newname already exists"
+        else
+            mv "$img" "$newname"
+            echo "Renamed: $img → $newname"
+        fi
+    else
+        echo "No DateTimeOriginal found for $img, skipping..."
+    fi
+done
+
+	</pre>
+	</fieldset>
+	
+	<p>👣 Make the file executable:</p>
+	<code>chmod +x picture-name-date-time.sh</code>
+	
+	<p>👣 Copy it into the images' folder in case</p>
+	<p>👣 Run the script...</p>
+	<code>./picture-name-date-time.sh</code>
+	
+	<hr />
+	
+	<h3>💡 Important Notes:</h3>
+	
+	<p>Before using this script, make sure to <strong>back up your original image files</strong>. While the script is designed to rename files safely, unexpected issues (like interrupted processes or incorrect metadata) could still lead to unwanted results. Having a backup ensures your photos remain safe no matter what happens.</p>
+	
+	<h3 class="warning">⚠️ Disclaimer:</h3>
+	<p class="warning">This script is provided “as is”, without any warranty of any kind, either expressed or implied. The author assumes no responsibility for data loss, damage, or any other issues that may arise from using or modifying this script. Use it at your own discretion and risk.</p>
+	
+<!--
+	<p>🦊 Gitlab: <a href="#" target="_blank" rel="noopener noreferrer">See on Gitlab↗️</a></p>
+-->
+		
+</div><!-- /.file-content -->
+    
+    <button id="scrollTopBtn">Top &#x2B06;</button>
+	
+  </div><!-- /#terminal -->
+
+<script src="layout/script.js"></script> 
+<script src="layout/scroller.js"></script> 
+<script src="layout/codeBlockCopier.js"></script>
+
+</body>
+</html>
+

@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Corrupted files finder</title>
+<link rel="icon" type="image/png" sizes="32x32" href="layout/imgs/techDIY-favicon2-32x32.png">
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="layout/style.css" />
+</head>
+<body>
+	
+<div id="orientation-bar">
+	<span class="project-label">📄 corrupted-files-finder</span>
+	<span class="nav-hint">| <a href="home.html">home</a></span>
+</div>
+	
+	
+  <div id="terminal">
+    <div id="banner-container">
+      <pre id="banner">
+_______________________________________________
+ _____  ____  __    _          ___   _   _     
+  | |  | |_  / /`  | |_|  __  | | \ | | \ \_/  
+  |_|  |_|__ \_\_, |_| | (_() |_|_/ |_|  |_|   
+_______________________________________________
+		</pre>
+		
+<span class="ansi-cyan">Type 'help' to see available commands.</span><br />
+<span class="hint">You can use some terminal commands to navigate...</span>
+
+    </div><!-- /#banner-container -->
+    
+    <div id="output"></div>
+
+    <div class="input-line">
+      <span class="prompt">guest@techdiy:~$</span>
+      <input type="text" id="input" autofocus autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+    </div>
+
+<!-- Main static content for files/pages -->
+
+<div class="file-content">
+	<h2>Media & Document File Corruption Checker Script</h2>
+	
+	<h3>Overview</h3>
+
+	<p>This Bash script is a handy tool for verifying the integrity of common media (images, videos, audio) and document files on Linux systems.</p>
+
+	<p>It’s designed for <q>speed, accuracy, and safety,</q> helping you find corrupted files without overloading your CPU.</p>
+	
+	<p>Whether you’re a photographer with thousands of images, a video editor managing terabytes of footage, or just someone archiving documents — this tool helps keep your files healthy.</p>
+	
+	
+	<h3>Features</h3>
+	
+	<p>&cir; <b>Supports multiple file types:</b></p>
+		
+	<ul>
+		<li>Images: <q>.jpg</q>, <q>.jpeg</q>, <q>.png</q>, <q>.gif</q>, <q>.bmp</q>, <q>.tiff</q>, <q>.webp</q></li>
+		<li>Videos: <q>.mp4</q>, <q>.mkv</q>, <q>.mov</q>, <q>.avi</q>, <q>.wmv</q>, <q>.flv</q>, <q>.webm</li>
+		<li>Audio: <q>.mp3</q>, <q>.wav</q>, <q>.flac</q></li>
+		<li>Documents: <q>.pdf</q>, <q>.docx</q>, <q>.odt</q></li>
+	</ul>
+
+	<ul>
+		<li><b>Recursive or single-folder scanning</b> — you decide.</li>
+		<li><b>Low CPU load</b> — uses lightweight checks and efficient commands.</li>
+		<li><b>Progress display</b> — know exactly how far along the scan is.</li>
+	</ul>
+	
+	<p><b>&cir; Accurate verification:</b></p>
+
+    <ul>
+		<li>Images checked with <q>identify</q> (ImageMagick)</li>
+		<li>Videos & audio checked with <q>ffprobe</q> (FFmpeg)</li>
+		<li>PDFs checked with <q>pdftotext</q> (detects unreadable/encrypted files)</li>
+		<li><q>.docx</q> and <q>.odt</q> checked via archive integrity</li>
+	</ul>
+
+	<p>&cir; <b>Lists only corrupted files — no unnecessary noise.</b></p>
+
+	
+	<h3>Why Use This Script?</h3>	
+
+	<p>File corruption can happen for many reasons:</p>
+	
+		<ul>
+			<li>Faulty hard drives or SSDs</li>
+			<li>Interrupted downloads</li>
+			<li>File transfers gone wrong</li>
+			<li>Damaged archives from old backups</li>
+		</ul>
+	
+	<p>This script ensures you <b>find the bad files before you need them</b> — preventing nasty surprises.</p>
+	
+		
+	<h3>Requirements</h3>
+	
+	<p>You’ll need the following tools installed:</p>
+	<p><q>imagemagick</q>, <q>ffmpeg</q>, <q>poppler-utils</q>, <q>unzip</q></p>
+	
+	<ul>
+		<li><q>ImageMagick</q> → image checking</li>
+		<li><q>FFmpeg</q> → audio/video verification</li>
+		<li><q>poppler-utils</q> → pdftotext for PDF scanning</li>
+		<li><q>unzip</q> → document archive integrity checks</li>
+	</ul>
+	
+	
+	
+	
+	
+	<h3>Here's the script:</h3>
+	
+	<fieldset  class="file-block">
+		<legend>corrupted-files-finder.sh:</legend>
+		<button class="copy-btn">Copy</button>
+	<pre  class="code-content">
+#!/usr/bin/env bash
+
+### How To Use
+# chmod +x this_script.sh
+# ./this_script.sh /path/to/folder yes    # recursive (default)
+# ./this_script.sh /path/to/folder no     # only current directory (--max-depth=1)
+#
+# NOTE: Monitor system resources (use `htop`, `btop` etc) if run recursively 
+# ..to avoid system crashes! if the content is too large.
+###
+
+# Define supported file types and their categories
+declare -A FILE_TYPES=(
+    [mp3]="audio"
+    [wav]="audio"
+    [flac]="audio"
+    [m4a]="audio"
+    [wma]="audio"
+    [mp4]="video"
+    [mkv]="video"
+    [mov]="video"
+    [wav]="video"
+    [avi]="video"
+    [wmv]="video"
+    [flv]="video"
+    [webm]="video"
+    [3gp]="video"
+    [mpg]="video"
+    [mpeg]="video"
+    [vob]="video"
+    [jpg]="image"
+    [jpeg]="image"
+    [png]="image"
+    [gif]="image"
+    [bmp]="image"
+    [tiff]="image"
+    [webp]="image"
+    [svg]="image"
+    [pdf]="doc"
+    [docx]="doc"
+    [odt]="doc"
+)
+
+# Get input arguments
+SCAN_PATH="${1:-.}"
+RECURSIVE="${2:-yes}"
+
+# Determine maxdepth option for find
+if [[ "$RECURSIVE" =~ ^[Yy](es)?$ ]]; then
+    MAXDEPTH=""
+else
+    MAXDEPTH="-maxdepth 1"
+fi
+
+# Check required tools
+for tool in identify ffprobe pdftotext unzip file; do
+    if ! command -v "$tool" >/dev/null 2>&1; then
+        echo "Error: '$tool' is required but not installed. Please install it and rerun."
+        exit 1
+    fi
+done
+
+# Count total files before scanning
+TOTAL_FILES=0
+for ext in "${!FILE_TYPES[@]}"; do
+    count=$(find "$SCAN_PATH" $MAXDEPTH -type f -iname "*.$ext" | wc -l)
+    TOTAL_FILES=$((TOTAL_FILES + count))
+done
+
+if (( TOTAL_FILES == 0 )); then
+    echo "No supported files found to scan."
+    exit 0
+fi
+
+echo "Found $TOTAL_FILES files to scan."
+echo "Scanning folder: $SCAN_PATH"
+echo "Recursive scan: $([[ -z "$MAXDEPTH" ]] && echo yes || echo no)"
+echo
+
+check_file() {
+    local file="$1"
+    local ext="${file##*.}"
+    ext="${ext,,}"  # convert to lowercase
+
+    case "${FILE_TYPES[$ext]}" in
+        image)
+            identify "$file" >/dev/null 2>&1
+            ;;
+        video|audio)
+            ffprobe -v error -show_format -show_streams "$file" >/dev/null 2>&1
+            ;;
+        doc)
+            case "$ext" in
+                pdf)
+                    pdftotext "$file" - >/dev/null 2>&1
+                    ;;
+                docx|odt)
+                    unzip -tq "$file" >/dev/null 2>&1
+                    ;;
+                *)
+                    file "$file" >/dev/null 2>&1
+                    ;;
+            esac
+            ;;
+        *)
+            return 0 # Unknown type, skip
+            ;;
+    esac
+}
+
+CORRUPTED_FILES=()
+
+echo "Starting corruption scan..."
+scanned=0
+for ext in "${!FILE_TYPES[@]}"; do
+    while IFS= read -r -d '' file; do
+        scanned=$((scanned + 1))
+        printf "\rScanning files: %d/%d" "$scanned" "$TOTAL_FILES"
+
+        if ! check_file "$file"; then
+            CORRUPTED_FILES+=("$file")
+        fi
+    done < <(find "$SCAN_PATH" $MAXDEPTH -type f -iname "*.$ext" -print0)
+done
+echo # newline after progress
+
+echo
+if [[ ${#CORRUPTED_FILES[@]} -eq 0 ]]; then
+    echo "✅ No corrupted files found."
+else
+    echo "⚠️ Corrupted files found:"
+    for f in "${CORRUPTED_FILES[@]}"; do
+        echo "  $f"
+    done
+fi
+
+	</pre>
+	</fieldset>
+	
+	<p>👣 Make the file executable:</p>
+	<code>chmod +x corrupted-files-finder.sh</code>
+	
+	<p>👣 Run the script...</p>
+	<code>./corrupted-files-finder.sh /path/to/folder yes</code>
+	<blockquote>
+	<uk>
+		<li>First argument = folder to scan (<q>.</q> for current directory)</li>
+		<li>Second argument = <q>yes</q> for recursive, <q>no</q> for current folder only</li>
+	</uk>
+	</blockquote>
+	
+	<p><b><i>** You can ignore the last <q>yes</q> as the recursive scan is the default behaviour anyway!</i></b></p>
+	
+	<h3>Tips</h3>
+	
+	<ul>
+		<li>Run it periodically to keep your library healthy.</li>
+		<li>Use it after transferring or downloading large batches of files.</li>
+		<li>Lower its priority if you want to scan in the background:</li>
+	</ul>
+	
+	<code>nice -n 19 ./corrupted-files-finder.sh /path/to/folder</code>
+	
+	<hr />
+	
+	<h3>💡 Notes:</h3>
+	
+	<p>This script is <strong>experimental</strong> and should not be considered as the complete solution for detecting the corrupted files. It may be extended in the future to improve its effectiveness.</p>
+	
+	<h3 class="warning">⚠️ Disclaimer:</h3>
+	<p class="warning">This script is provided as-is, without any warranties or guarantees of any kind. Use of this at your own risk.</p>
+	
+<!--
+	<p>🦊 Gitlab: <a href="#" target="_blank" rel="noopener noreferrer">See on Gitlab↗️</a></p>
+-->
+		
+</div><!-- /.file-content -->
+    
+    <button id="scrollTopBtn">Top &#x2B06;</button>
+	
+  </div><!-- /#terminal -->
+
+<script src="layout/script.js"></script> 
+<script src="layout/scroller.js"></script> 
+<script src="layout/codeBlockCopier.js"></script>
+
+</body>
+</html>
+

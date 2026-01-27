@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Malicious USB device detector</title>
+<link rel="icon" type="image/png" sizes="32x32" href="layout/imgs/techDIY-favicon2-32x32.png">
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="layout/style.css" />
+</head>
+<body>
+	
+<div id="orientation-bar">
+	<span class="project-label">📄 malicious-usb-device-detector</span>
+	<span class="nav-hint">| <a href="home.html">home</a></span>
+</div>
+	
+	
+  <div id="terminal">
+    <div id="banner-container">
+      <pre id="banner">
+_______________________________________________
+ _____  ____  __    _          ___   _   _     
+  | |  | |_  / /`  | |_|  __  | | \ | | \ \_/  
+  |_|  |_|__ \_\_, |_| | (_() |_|_/ |_|  |_|   
+_______________________________________________
+		</pre>
+		
+<span class="ansi-cyan">Type 'help' to see available commands.</span><br />
+<span class="hint">You can use some terminal commands to navigate...</span>
+
+    </div><!-- /#banner-container -->
+    
+    <div id="output"></div>
+
+    <div class="input-line">
+      <span class="prompt">guest@techdiy:~$</span>
+      <input type="text" id="input" autofocus autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+    </div>
+
+<!-- Main static content for files/pages -->
+
+<div class="file-content">
+	<h2>Malicious USB Device Detector</h2>
+	
+	<h3>What They Are</h3>
+
+	<p>Malicious USB charging cables, often called <q>USB attack cables</q> or <q>O.MG cables</q>, look like regular charging cables but contain hidden hardware that can steal data, install malware, or remotely control a device. Once plugged into a computer or smartphone, they can execute harmful commands without the user's knowledge.</p>
+
+	<p>These cables resemble ordinary charging/data cables, but contain hidden hardware—typically a tiny implant that can connect via Wi‑Fi to let an attacker remotely access your device.</p>
+	
+	<h3>How They Work</h3>
+	
+	<p>Once plugged in normally, the cable behaves like a regular USB‑A, USB‑C, micro‑USB or Lightning cable. But secretly, it can:</p>
+	<p>&bull; Act as a <strong>keyboard</strong> to inject keystroke-based commands using <i>DuckyScript</i>.</p>
+	<p>&bull; Launch scripts to install malware, steal passwords, or exfiltrate data.</p>
+	<p>&bull; Function as a <strong>hardware keylogger</strong>, storing up to hundreds of thousands of keystrokes for later retrieval .</p>
+	
+	<h3>Real-World Impact</h3>	
+
+	<p>&bull; These cables are marketed for <strong>red-teaming and penetration testing</strong>, but can also be used maliciously, posing serious threats to corporate or personal data security.</p>
+	
+	<p>&bull; Some variants offer advanced features like <strong>geo‑fencing</strong>, <strong>self-destruct</strong>, and encrypted command/control connections.</p>
+	
+	<p>&bull; Malicious USB charging cables act like <strong>BadUSB flash drives</strong>, they can emulate a keyboard or mouse to execute harmful commands, but are even more dangerous because they look like regular charging cables. Unlike suspicious-looking USB sticks, these cables blend in with everyday tech, making them much less likely to raise alarms or be noticed during security checks.</p>
+	
+	<h3>How to Stay Safe</h3>
+	
+	<p><strong>Never use</strong> cables found unattended or offered by strangers <i>(e.g. charging stations, shared cords, freebies)</i>.</p>
+	
+	<p><strong>Only use cables from trusted manufacturers</strong>, ideally original-brand accessories</p>
+	
+	<p><strong>Train staff and users</strong> to avoid <q>cable baiting</q> where attackers leave malicious cables deliberately for unsuspecting users.</p>
+	
+	<p>Security protocols in professional environments should <strong>limit USB usage and regularly inspect any new cables</strong> entering the premises.</p>
+	
+	<h3>Here's some basic script for detection: <i>(Linux command line only)</i></h3>
+	
+	<fieldset  class="file-block">
+		<legend>bad-usb-checker.sh:</legend>
+		<button class="copy-btn">Copy</button>
+	<pre  class="code-content">
+#!/bin/bash
+
+####################################################
+# Script detects USB malicious behaviour  
+# ..(especially HID injection or rogue USB devices) 
+# ..while you plug in the USB cable
+####################################################
+
+echo "🔍 USB Safety Check Starting..."
+TMPDIR=$(mktemp -d -t usbmon-XXXX)
+trap "rm -rf $TMPDIR" EXIT
+
+# Take snapshots before
+echo "[*] Capturing initial state..."
+lsusb > "$TMPDIR/lsusb_before"
+ls /dev/input/ > "$TMPDIR/input_before"
+ls /dev/ | grep tty > "$TMPDIR/tty_before"
+lsblk > "$TMPDIR/lsblk_before"
+
+# Check if libinput exists
+HAS_LIBINPUT=false
+if command -v libinput &> /dev/null; then
+    HAS_LIBINPUT=true
+    echo "[*] libinput detected, monitoring for HID injection..."
+    sudo libinput debug-events > "$TMPDIR/libinput.log" &
+    LIBINPUT_PID=$!
+else
+    echo "[!] libinput not found, skipping HID monitoring"
+    echo "[!] You can install 'libinput-tools' for HID injection monitoring!"
+fi
+
+# Monitor dmesg in background
+sudo dmesg --follow > "$TMPDIR/dmesg.log" &
+DMESG_PID=$!
+
+echo ""
+echo "➡️  Please plug in the USB cable now. Waiting 30 seconds..."
+sleep 30
+
+# Stop background processes
+kill $DMESG_PID &> /dev/null
+[ "$HAS_LIBINPUT" = true ] && kill $LIBINPUT_PID &> /dev/null
+
+# Take snapshots after
+echo "[*] Capturing post-insertion state..."
+lsusb > "$TMPDIR/lsusb_after"
+ls /dev/input/ > "$TMPDIR/input_after"
+ls /dev/ | grep tty > "$TMPDIR/tty_after"
+lsblk > "$TMPDIR/lsblk_after"
+
+# Compare and display only differences
+echo ""
+echo "🧪 Changes Detected:"
+echo "--------------------"
+
+function compare_and_report() {
+    LABEL=$1
+    FILE1=$2
+    FILE2=$3
+    DIFF=$(diff "$FILE1" "$FILE2")
+    if [ -n "$DIFF" ]; then
+        echo "🔸 $LABEL changed:"
+        echo "$DIFF" | sed 's/^/> /'
+        echo ""
+    else
+        echo "✅ $LABEL: No changes"
+    fi
+}
+
+compare_and_report "USB Devices (lsusb)" "$TMPDIR/lsusb_before" "$TMPDIR/lsusb_after"
+compare_and_report "/dev/input devices" "$TMPDIR/input_before" "$TMPDIR/input_after"
+compare_and_report "/dev/tty* devices" "$TMPDIR/tty_before" "$TMPDIR/tty_after"
+compare_and_report "Block Devices (lsblk)" "$TMPDIR/lsblk_before" "$TMPDIR/lsblk_after"
+
+if [ "$HAS_LIBINPUT" = true ]; then
+    echo "🔍 Keystroke/Motion Activity (from libinput):"
+    if grep -q . "$TMPDIR/libinput.log"; then
+        grep -E 'key|button|motion' "$TMPDIR/libinput.log" | sed 's/^/> /'
+    else
+        echo "✅ No input activity detected."
+    fi
+    echo ""
+fi
+
+echo "🛡️  Done. No persistent changes made to your system."
+
+	</pre>
+	</fieldset>
+	
+
+	
+	<p>👣 Make the file executable:</p>
+	<code>chmod +x bad-usb-checker.sh</code>
+	
+	<p>👣 Run the script <strong>before</strong> connecting the USB interface. The script will tell you when it's ready to connect it...</p>
+	
+	<hr />
+	
+	<h3>💡 Notes:</h3>
+	
+	<p>This script is <strong>experimental</strong> and should not be considered as the complete solution for detecting or protecting against these devices. It may be extended in the future to improve its effectiveness.</p>
+	
+	<h3 class="warning">⚠️ Disclaimer:</h3>
+	<p class="warning">This script is provided as-is, without any warranties or guarantees of any kind. Use of this at your own risk.</p>
+	
+<!--
+	<p>🦊 Gitlab: <a href="#" target="_blank" rel="noopener noreferrer">See on Gitlab↗️</a></p>
+-->
+		
+</div><!-- /.file-content -->
+    
+    <button id="scrollTopBtn">Top &#x2B06;</button>
+	
+  </div><!-- /#terminal -->
+
+<script src="layout/script.js"></script> 
+<script src="layout/scroller.js"></script> 
+<script src="layout/codeBlockCopier.js"></script>
+
+</body>
+</html>
+

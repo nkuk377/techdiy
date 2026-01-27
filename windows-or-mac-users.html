@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>For Windows or Mac Users</title>
+<link rel="icon" type="image/png" sizes="32x32" href="layout/imgs/techDIY-favicon2-32x32.png">
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="layout/style.css" />
+</head>
+<body>
+	
+<div id="orientation-bar">
+	<span class="project-label">📄 windows-or-mac-users</span>
+	<span class="nav-hint">| <a href="home.html">home</a></span>
+</div>
+	
+	
+  <div id="terminal">
+    <div id="banner-container">
+      <pre id="banner">
+_______________________________________________
+ _____  ____  __    _          ___   _   _     
+  | |  | |_  / /`  | |_|  __  | | \ | | \ \_/  
+  |_|  |_|__ \_\_, |_| | (_() |_|_/ |_|  |_|   
+_______________________________________________
+		</pre>
+		
+<span class="ansi-cyan">Type 'help' to see available commands.</span><br />
+<span class="hint">You can use some terminal commands to navigate...</span>
+
+    </div><!-- /#banner-container -->
+    
+    <div id="output"></div>
+
+    <div class="input-line">
+      <span class="prompt">guest@techdiy:~$</span>
+      <input type="text" id="input" autofocus autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+    </div>
+
+<!-- Main static content for files/pages -->
+
+<div class="file-content">
+	
+	<h2>What if You’re on Windows or Mac?</h2>	
+	
+	<p>If you are not a Linux user - you still got options:</p>	
+	
+	<h3>Windows Users</h3>	
+	
+	<p>&cir; You can run this script inside <strong>Windows Subsystem for Linux (WSL)</strong>.</p>
+		
+		<ul>
+			<li>Install WSL (Ubuntu is a great choice).</li>
+			<li>Once WSL is set up, open your Linux terminal and follow the same instructions as Linux users.</li>
+			<li>You can scan your Windows folders from WSL — just navigate to them (they’re usually under <q>/mnt/c/Users/...</q>).</li>
+		</ul>
+	
+	<h3>Mac Users</h3>
+	
+	<p>This script <i>might</i> work on macOS since it has Bash and many of the required tools available via <strong>Homebrew</strong>.</p>
+	
+	<p><strong>⚠️ Be aware</strong>: These scripts haven’t been tested on macOS, so results may be unpredictable!</p>
+	
+<hr />
+	
+	<h2>Better Way <i>(for both system users)</i></h2>
+	
+	<p>If you <strong>don’t want to change your daily system:</strong></p>
+	
+	<ul>
+		<li>You can boot into a <strong>Linux Live USB</strong> — no installation required, no changes to your existing OS.</li>
+		<li>Just run the script from the live session to check your files.</li>
+		<li>This gives you the benefits of Linux without switching full-time.</li>
+	</ul>
+	
+<hr />
+
+	<h2>The best way!</h2>
+	
+	<p>Consider making the switch to Linux for your workflow — a powerful, flexible, and reliable operating system widely regarded as superior for tasks like scripting, file management, and media handling.</p>
+	
+	<p>Unlike proprietary systems, Linux is completely <strong>free to use</strong>, with no <strong>costly licenses</strong> or <strong>restrictions</strong>. It offers versatility, strong community support, and full control over your computing environment, empowering you to customise your system <strong>exactly how you want!</strong></p>
+	
+	<p>Don’t let big tech companies or corporations <strong>limit</strong> your freedom or <strong>dictate</strong> how you use your computer. </p>
+	
+	<p>With Linux, you reclaim control over your operating system and your data — <strong>no lock-ins</strong>, no <strong>forced updates</strong>, no <strong>hidden tracking</strong>.</p>
+	
+	<h3 style="color:#8be9fd;"><i>Your Computer - your Rules!<i></h3>
+	
+	<p>Switching to Linux can simplify your setup, enhance security, and open up endless possibilities for automation and customization that other platforms just can’t match.</p>
+	
+	<p>&nbsp;</p>
+	
+<hr />	
+
+	 <p><strong>💡Note:</strong></p>
+	 <p>This web site won’t cover Windows or macOS setups, at least this is not the plan.</p>
+	 <p>I was a Windows user for a long time, I've made my change and can't see me going back. You make yours.</p>	
+		
+</div><!-- /.file-content -->
+    
+    <button id="scrollTopBtn">Top &#x2B06;</button>
+	
+  </div><!-- /#terminal -->
+
+<script src="layout/script.js"></script> 
+<script src="layout/scroller.js"></script> 
+<script src="layout/codeBlockCopier.js"></script>
+
+</body>
+</html>
+
