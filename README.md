@@ -1,6 +1,6 @@
 ## Welcome to Tech-DIY WEB site
 
-🔗 <a href="https://techdiy.xyz" target="_blank" rel="noopener">techdiy.xyz [↗]</a>
+🔗 [techdiy.xyz](https://techdiy.xyz)
 
 This site is a small collection of custom scripts that might be helpful, mostly for **Linux**, with some **Android ADB tools** and a couple of small **Docker** projects.
 
