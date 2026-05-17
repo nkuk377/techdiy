@@ -52,6 +52,10 @@ Tor Browser is designed to help protect your privacy online by anonymizing your 
 	<p>&bull; <strong>Debian Base:</strong> Built on top of Debian bookworm-slim image.</p>
 	<p>&bull; <strong>Isolated Environment:</strong> Ensures that the Tor Browser runs in a sandboxed environment.</p>
 
+	<h3>⚠️ Before starting to set it up - please read "Security Considerations" section at the end of this page!</h3>
+
+	<hr />
+
 	<h3>Requirements:</h3>
 
 	<p>1. <q>Tor browser</q> needs to be downloaded manually, as for example <q>tor-project-linux-x86_64.5.7.tar.xz</q></p>
@@ -188,9 +192,13 @@ xhost -local:docker
 	<p>&bull; This container is designed to run in a sandboxed environment with minimal exposure to the host system.</p>
 
     <p>&bull; It's recommended to run this image using non-privileged user permissions and limit access to sensitive directories.</p>
+    
+    <p>&bull; This project uses <q>Docker</q> by default, but it is also fully compatible with <q>Podman</q> as a drop-in alternative. Podman offers a <strong>DAEMONLESS</strong> architecture and supports running containers <strong>WITHOUT</strong> root privileges, which can improve both security and system stability. Since its CLI is largely compatible with Docker, most commands can be used without modification.</p>
+
+	<p>&bull;For developers working in security-focused or enterprise environments, Podman can be a better fit thanks to its <strong>ROOTLESS EXECUTION</strong> model and tighter integration with Linux system services. If Docker is not available on your system, you can typically replace <strong>Docker</strong> commands with <strong>Podman</strong> equivalents and continue using the project normally.</p>
 	
 	<h3>⚠️ Disclaimer:</h3>
-	<p>This Docker image is provided as-is, without any warranties or guarantees of any kind. Use of this image is entirely at your own risk.</p>
+	<p><i>This Docker image is provided as-is, without any warranties or guarantees of any kind. Use of this image is entirely at your own risk.</i></p>
 	
 	<hr />
 	
