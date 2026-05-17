@@ -74,7 +74,7 @@ function typeLine(htmlContent, callback) {
       index++;
       //output.scrollTop = output.scrollHeight;
       document.getElementById('input').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      setTimeout(typeChar, 15); // Adjust typing speed here
+      setTimeout(typeChar, 7); // Adjust typing speed here
     } else {
       container.innerHTML = htmlContent; // Replace with full styled HTML after typing
       //output.scrollTop = output.scrollHeight;
@@ -124,13 +124,13 @@ function handleCommand(cmd) {
     return;
   }
 
-  if (cmd === 'cd' || cmd === 'cd ..' || cmd === 'cd ~' || cmd === 'cd ~/' || cmd === 'home') {
+  if (cmd === 'cd' || cmd === 'cd ~' || cmd === 'cd ~/' || cmd === 'home') {
     localStorage.setItem('previousPath', window.location.pathname);
     window.location.href = 'home.html';
     return;
   }
 
-  if (cmd === 'cd -') {
+  if (cmd === 'cd -' || cmd === 'cd ..' ) {
     const previous = localStorage.getItem('previousPath');
     if (previous) {
       localStorage.setItem('previousPath', window.location.pathname);
@@ -181,10 +181,9 @@ function handleCommand(cmd) {
       /* Adding Tips */
       lsOutput += `</span>
 <span class="ansi-green">Tips:</span>
-<i>Use short aliases (<q>ffd</q>, <q>tor</q>, <q>adb</q>...) present along the file names above with <b class="ansi-purple">'cat'</b> or <b class="ansi-purple">'less'</b> command to open files: 
+<i>Use short aliases (<q>ffd</q>, <q>tor</q>, <q>adb</q>...) present along the file names above with <b class="ansi-purple">'cat'</b> or <b class="ansi-purple">'less'</b> command to open files. 
 For example:
-<b class="ansi-purple">'cat ffd'</b>	→ opens file <b class="ansi-purple">'docker-image-firefox-browser-on-debian'</b> ..OR
-<b class="ansi-purple">'less adb'</b>	→ opens file <b class="ansi-purple">'android-adb-app-uninstaller'</b> etc..
+<b class="ansi-purple">'less &lt;alias&gt;'</b>	→ opens the file etc..
 ..OR you can just click on</i>
 <br />`;
       lsOutput += `</span>`;
