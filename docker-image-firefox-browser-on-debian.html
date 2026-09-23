@@ -48,7 +48,7 @@ _______________________________________________
 
 	<p>1. <strong>Podman</strong> (recommended) - In the .sh file below "podman" is used instead of "docker".</p>
 	<blockquote>Why Podman?: It offers a DAEMONLESS architecture and supports running containers WITHOUT root privileges, which can improve both security and system stability. Since its CLI is largely compatible with Docker, most commands can be used without modification.</blockquote>
-	<p>2. <strong>Docker</strong> (compatible) - Ensure to replace "podman" with `docker` in the .sh file if you want to use it instead.</p>
+	<p>2. <strong>Docker</strong> (compatible) - Ensure to replace "podman" with "docker" in the .sh file if you want to use it instead.</p>
 	<p>3. <strong>X11 Server</strong> -- You need to have an "X11" server running for the graphical interface.</p>
 	⚠️ <i>It does not work on Wayland !</i>
 	
@@ -61,7 +61,7 @@ _______________________________________________
 	<h3>Usage:</h3>
 
 	<p>👣 Create a folder <q>firefox-debian</q></p>
-	<p>👣 Create two files in that folder: <q>dockerfile</q> & <q>run-firefox.sh</q> with the code below...</p>
+	<p>👣 Create two files in that folder: <q>Dockerfile</q> & <q>run-firefox.sh</q> with the code below...</p>
 	
 	<fieldset  class="file-block">
 		<legend>Dockerfile:</legend>
@@ -173,12 +173,12 @@ xhost -local:$(id -un)
 	<p><strong>You can interactively enter the running container:</strong></p>
 	<p>👣 Open a new terminal window or tab when container is running, keep the browser open and run:</p>
 	
-	<code>docker exec -it &lt;container_name_or_id&gt; bash</code>
+	<code>podman exec -it &lt;container_name_or_id&gt; bash</code>
 	
 	<blockquote>If you close the browser running from the container - the container process exites!</blockquote>
 
 	<p>&bull; You can install additional packages as <q>sudo</q> is installed <i>(no password needed)</i></p>
-	<blockquote>You can do so adding the packages in the package list in the <q>dockerfile</q> before run it!</blockquote>
+	<blockquote>You can do so adding the packages in the package list in the <q>Dockerfile</q> before run it!</blockquote>
 	
 	<hr />
 	
