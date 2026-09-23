@@ -52,6 +52,216 @@ Tor Browser is designed to help protect your privacy online by anonymizing your 
 	<p>&bull; <strong>Debian Base:</strong> Built on top of Debian bookworm-slim image.</p>
 	<p>&bull; <strong>Isolated Environment:</strong> Ensures that the Tor Browser runs in a sandboxed environment.</p>
 
+	<h3>To run this script succesfuly - need to use VPN or Tor</h3>
+	
+	[?] <i>Why? - If scripts try to pull Tor Browser directly via ISP (clear net) and do NOT use VPN or so - might have an error, as at the time this project was created, Tor Project was refusing users pulling browser via clear net!</i>
+
+	<hr />
+
+	<h3>Requirements:</h3>
+
+	<p>1. <q>Podman</q> (recommended) - In the .sh file below "podman" is used instead of "docker".</p>
+	<p>2. <q>Docker</q> (compatible) - Ensure to replace "podman" with "docker" in the .sh file if you want to use it instead.</p>
+	<p>3. <q>X11 Server</q> -- You need to have an X11 server running for the graphical interface.</p>
+	
+	<p>⚠️ <i>It does not work on Wayland !</i></p>
+	
+	<p>4. Use VPN or Tor connection.</p>
+	
+	<blockquote>On clear net will not be possible to pull/download Tor-browser, as the Tor project does not allow it !</blockquote>
+	
+	<h3>Usage:</h3>
+
+	<p>👣 Create a folder <q>tor-browser-debian</q></p>
+	<p>👣 Create two files in the same folder: "Dockerfile" & "run-tor-browser.sh" with the code below...</p>
+	
+	<hr />
+		
+	<fieldset  class="file-block">
+		<legend>Dockerfile:</legend>
+		<button class="copy-btn">Copy</button>
+	<pre  class="code-content">
+FROM debian:bookworm-slim
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    libasound2 \
+    libdbus-glib-1-2 \
+    libgtk-3-0 \
+    libx11-xcb1 \
+    libxt6 \
+    libpci3 \
+    xz-utils \
+    ffmpeg \
+    pulseaudio \
+    apt-utils \
+    curl \
+    libgl1-mesa-glx \
+    libegl1-mesa \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /home/torbrowser
+
+RUN LATEST_VERSION=$(curl -sSL https://www.torproject.org/dist/torbrowser/ | \
+    grep -oP 'href="([0-9]+\.[0-9]+\.[0-9]+)/"' | \
+    grep -oP '[0-9]+\.[0-9]+\.[0-9]+' | sort -V | tail -n 1) && \
+    echo "Latest Tor Browser version: $LATEST_VERSION" && \
+    curl -sSL -o /home/torbrowser/tor.tar.xz \
+      https://www.torproject.org/dist/torbrowser/${LATEST_VERSION}/tor-browser-linux-x86_64-${LATEST_VERSION}.tar.xz && \
+    tar xJf /home/torbrowser/tor.tar.xz && \
+    rm -f /home/torbrowser/tor.tar.xz
+
+RUN useradd -ms /bin/bash torbrowser
+RUN chown -R torbrowser:torbrowser /home/torbrowser
+
+USER torbrowser
+WORKDIR /home/torbrowser/tor-browser
+
+ENTRYPOINT ["./start-tor-browser.desktop", "--verbose"]
+	</pre>
+	</fieldset>
+	
+	<fieldset  class="file-block">
+		<legend>run-tor-browser.sh:</legend>
+		<button class="copy-btn">Copy</button>
+	<pre  class="code-content">
+#!/bin/bash
+set -e
+
+cd "$(dirname "$0")"
+
+IMAGE="localhost/dockerfos/tor-browser-debian:latest"
+
+# Build the Podman image if it doesn't exist
+if ! podman image exists "$IMAGE"; then
+    echo "Building Podman image for Tor Browser..."
+    podman build -t "$IMAGE" .
+else
+    echo "Image already exists, skipping build."
+fi
+
+# Grant X11 access
+xhost +local:$(id -un)
+
+# PulseAudio paths
+PULSE_SERVER="unix:/run/user/$(id -u)/pulse/native"
+PULSE_SOCKET="/run/user/$(id -u)/pulse/native"
+PULSE_COOKIE="$HOME/.config/pulse/cookie"
+
+# Run Tor Browser container
+echo "Running Tor Browser inside Podman..."
+podman run -it --rm \
+    --network="slirp4netns:allow_host_loopback=false" \
+    -e DISPLAY="$DISPLAY" \
+    -e PULSE_SERVER="$PULSE_SERVER" \
+    -v /tmp/.X11-unix:/tmp/.X11-unix:rw \
+    -v "$PULSE_SOCKET:$PULSE_SOCKET:rw" \
+    -v "$PULSE_COOKIE:/home/torbrowser/.config/pulse/cookie:ro" \
+    "$IMAGE"
+
+# Revoke X11 access after container exits
+echo "Revoking Podman access to X11 server..."
+xhost -local:$(id -un)
+	</pre>
+	</fieldset>
+	
+	<p>👣 Make <q>run-tor-browser.sh</q> executable:</p>
+	<code>chmod +x run-tor-browser.sh</code>
+	
+	<p>👣 No need to build the image - just run the script:</p>
+	<code>./run-tor-browser.sh</code>
+	
+	<hr />
+	
+	<h3>💡 Security Considerations:</h3>
+	
+	<p>&bull; This container is designed to run in a sandboxed environment with minimal exposure to the host system.</p>
+
+    <p>&bull; It's recommended to run this image using non-privileged user permissions and limit access to sensitive directories.</p>
+
+	<h3>⚠️ Disclaimer:</h3>
+	<p>This Docker image is provided <q>as-is</q>, without any warranties or guarantees of any kind. Use of this image is <q>entirely at your own risk</q>.</p>
+	<p>The developer assumes <strong>no responsibility for</strong>:
+	
+	<p>&bull; Any issues, damage, or data loss resulting from the use of this image.</p>
+	<p>&bull; Legal implications, security vulnerabilities, or other risks related to its usage, including but not limited to the use of the Tor network in your jurisdiction.</p>
+	<p>&bull; Compliance with local laws, network restrictions, or any regulatory requirements.</p>
+	
+	<p>By using this image, you agree that the developer will not be held liable for any consequences or actions that arise from its usage. Please ensure you have reviewed all relevant legal considerations and understand the potential risks involved before deploying or using this image.</p>
+	
+	<hr />
+	
+	<p>🐙 Github: <a href="#" target="_blank" rel="noopener noreferrer">See on Github↗️</a></p>
+	
+	<p>🦊 Gitlab: <a href="https://gitlab.com/docker-group5151917/docker-projects" target="_blank" rel="noopener noreferrer">See on Gitlab↗️</a></p>
+		
+</div><!-- /.file-content -->
+    
+    <button id="scrollTopBtn">Top &#x2B06;</button>
+	
+  </div><!-- /#terminal -->
+
+<script src="layout/script.js"></script> 
+<script src="layout/scroller.js"></script> 
+<script src="layout/codeBlockCopier.js"></script>
+
+</body>
+</html>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Tor Browser - Docker image based on Debian</title>
+<link rel="icon" type="image/png" sizes="32x32" href="layout/imgs/techDIY-favicon2-32x32.png">
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="layout/style.css" />
+</head>
+<body>
+	
+<div id="orientation-bar">
+	<span class="project-label">📄 docker-image-tor-browser-on-debian</span>
+	<span class="nav-hint">| <a href="home.html">home</a></span>
+</div>
+		
+  <div id="terminal">
+    <div id="banner-container">
+		
+      <pre id="banner">
+_______________________________________________
+ _____  ____  __    _          ___   _   _     
+  | |  | |_  / /`  | |_|  __  | | \ | | \ \_/  
+  |_|  |_|__ \_\_, |_| | (_() |_|_/ |_|  |_|   
+_______________________________________________
+      </pre>
+      
+<span class="ansi-cyan">Type 'help' to see available commands.</span><br />
+<span class="hint">You can use some terminal commands to navigate...</span>
+
+    </div><!-- /#banner-container -->
+    
+    <div id="output"></div>
+
+    <div class="input-line">
+      <span class="prompt">guest@techdiy:~$</span>
+      <input type="text" id="input" autofocus autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+    </div>
+
+<!-- Main static content for files/pages -->
+
+<div class="file-content">
+	<h2>Tor Browser based on Debian:bookworm-slim - <i>Docker image</i></h2>
+
+	<p>This Docker image provides a secure, isolated environment to run the <a href="https://www.torproject.org/" target="_blank" rel="noopener noreferrer">Tor Browser↗️</a>⁠.
+Tor Browser is designed to help protect your privacy online by anonymizing your web traffic and shielding your identity from network surveillance and traffic analysis. This image is built on top of "Debian:bookworm-slim" base image, ensuring a stable and secure environment.</p>
+
+	<h3>Key Features:</h3>
+
+	<p>&bull; <strong>Tor Browser:</strong> Pre-installed and configured to run over the Tor network for anonymous browsing.</p>
+	<p>&bull; <strong>Debian Base:</strong> Built on top of Debian bookworm-slim image.</p>
+	<p>&bull; <strong>Isolated Environment:</strong> Ensures that the Tor Browser runs in a sandboxed environment.</p>
+
 	<h3>⚠️ Before starting to set it up - please read "Security Considerations" section at the end of this page!</h3>
 
 	<hr />
