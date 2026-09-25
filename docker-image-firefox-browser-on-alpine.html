@@ -41,7 +41,7 @@ _______________________________________________
 <!-- Main static content for files/pages -->
 
 <div class="file-content">
-	<h2>Firefox Browser based on Alpine Linux - <i>Docker image</i></h2>
+	<h2>Firefox Browser - Docker Image Based on Alpine</h2>
 
 	<p>This Docker image provides a lightweight and secure environment to run the "Firefox Browser" Based on "Alpine Linux", it is designed for users who prioritize speed and efficiency while maintaining privacy and security while browsing the web.</p>
 
@@ -64,8 +64,8 @@ _______________________________________________
 		<legend>dockerfile:</legend>
 		<button class="copy-btn">Copy</button>
 	<pre  class="code-content">
-# Use the Alpine base image
-FROM alpine:latest
+# Use the Alpine base image. DON'T use later than alpine:3:22, Firefox fails to launch !
+FROM alpine:3.22
 
 # Install Firefox, X11, and other necessary dependencies
 RUN apk update && apk add --no-cache \
