@@ -26,8 +26,8 @@
 📁 <b>linux</b>      <i>- Small scripts for automation etc..</i>
 </span>`,
     social: `<span class="ansi-yellow">
-🦊 Gitlab:   https://gitlab.com/mark-lab
-🐳 DockerHub: https://hub.docker.com/repositories/dockerfos
+🦊 Gitlab: https://gitlab.com/mark-lab
+🐙 Githab: https://github.com/nkuk377
 </span>`,
     email: `<span class="ansi-cyan">📫 Email: <span class="error">Not present..</span></span>`,
     clear: ''
