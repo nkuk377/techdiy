@@ -157,21 +157,19 @@ xhost -local:docker
 	
 	<p>👣 No need to build the image - just run the script:</p>
 	<code>./run-firefox.sh</code>
-	
-	<h3>💡 Security Considerations:</h3>
-	
-	<p>&bull; <strong>Not for Root Use:</strong> This image is not intended to be run as the root user for security reasons!</p>
-	
-	<p>&bull; This project uses <q>Docker</q> by default, but it is also fully compatible with <q>Podman</q> as a drop-in alternative. Podman offers a <strong>DAEMONLESS</strong> architecture and supports running containers <strong>WITHOUT</strong> root privileges, which can improve both security and system stability. Since its CLI is largely compatible with Docker, most commands can be used without modification.</p>
 
-	<p>&bull;For developers working in security-focused or enterprise environments, Podman can be a better fit thanks to its <strong>ROOTLESS EXECUTION</strong> model and tighter integration with Linux system services. If Docker is not available on your system, you can typically replace <strong>Docker</strong> commands with <strong>Podman</strong> equivalents and continue using the project normally.</p>
-	
+	<hr />
+
+	<h3>⚠️ Security Considerations:</h3>
+	<p>&bull; This container is designed to run in a sandboxed environment with minimal exposure to the host system.</p>
+	<p>&bull; It's recommended to run this image using non-privileged user permissions and limit access to sensitive directories.</p>
+
 	<h3>⚠️ Disclaimer:</h3>
-	<p><i>This Docker image is provided as-is, without any warranties or guarantees of any kind. Use of this image is entirely at your own risk.</i></p>
+	<p><i>This Docker image is provided <strong>as-is</strong>, without any warranties or guarantees of any kind. Use of this image is <strong>entirely at your own risk</strong>.</i></p>
 	
 	<hr />
 	
-	<p>🐳 DockerHub: <a href="https://hub.docker.com/repository/docker/dockerfos/firefox-alpine/general" target="_blank" rel="noopener noreferrer">See on DockerHub↗️</a></p>
+	<p>🐙 Github: <a href="https://github.com/nkuk377/firefox-alpine-docker" target="_blank" rel="noopener noreferrer">See on Github↗️</a></p>
 	
 	<p>🦊 Gitlab: <a href="https://gitlab.com/docker-group5151917/firefox-on-alpine-docker" target="_blank" rel="noopener noreferrer">See on Gitlab↗️</a></p>
 		
