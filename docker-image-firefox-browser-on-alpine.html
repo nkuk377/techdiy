@@ -47,9 +47,16 @@ _______________________________________________
 
 	<h3>Requirements:</h3>
 
-	<p>1. **Podman** (recommended) - In the .sh file below `podman` is used instead of `docker`.</p>
+	<p>1. <strong>Podman</strong> (recommended) - In the .sh file below `podman` is used instead of `docker`.</p>
 	<blockquote>Why Podman?: It offers a DAEMONLESS architecture and supports running containers WITHOUT root privileges, which can improve both security and system stability. Since its CLI is largely compatible with Docker, most commands can be used without modification.</blockquote>
-	<p>2. X11 Server: You need to have an X11 server running for the graphical interface.</p>
+	<p>2. <strong>Docker</strong>strong> (compatible) - Ensure to replace `podman` with `docker` in the .sh file if you want to use it instead.</p>
+	<p>3. <strong>X11 Server</strong> -- You need to have an **X11** server running for the graphical interface.</p>
+
+	<p>⚠️ <i>It does not work on Wayland !</i></p>
+
+	<blockquote>(to check what you using - run: `echo $XDG_SESSION_TYPE` on Linux)</blockquote>
+
+	<p><i>⚠️ _Tested on KDE Plasma (Linux). If you encounter issues, you may need to install additional package(s) for your desktop environment. Just follow the error message for guidance. Windows, macOS, and other operating systems have not been tested !_</i></p>
 
 	<h3>Usage:</h3>
 
