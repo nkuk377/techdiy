@@ -58,6 +58,8 @@ _______________________________________________
 
 	<p>⚠️ <i>Tested on KDE Plasma (Linux). If you encounter issues, you may need to install additional package(s) for your desktop environment. Just follow the error message for guidance. Windows, macOS, and other operating systems have not been tested !_</i></p>
 
+	<hr />
+	
 	<h3>Usage:</h3>
 
 	<p>👣 Create a folder <q>firefox-alpine</q></p>
@@ -65,7 +67,7 @@ _______________________________________________
 	
 	
 	<fieldset  class="file-block">
-		<legend>dockerfile:</legend>
+		<legend>Dockerfile:</legend>
 		<button class="copy-btn">Copy</button>
 	<pre  class="code-content">
 # Use the Alpine base image. DON'T use later than alpine:3:22, Firefox fails to launch !
@@ -160,7 +162,7 @@ xhost -local:docker
 
 	<hr />
 
-	<h3>⚠️ Security Considerations:</h3>
+	<h3>💡 Security Considerations:</h3>
 	<p>&bull; This container is designed to run in a sandboxed environment with minimal exposure to the host system.</p>
 	<p>&bull; It's recommended to run this image using non-privileged user permissions and limit access to sensitive directories.</p>
 
