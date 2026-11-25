@@ -1,12 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
 <title>Firefox Browser - Docker image based on Alpine</title>
+<meta name="description" content="Run Firefox browser in a lightweight Docker container based on Alpine Linux. Explore the setup and configuration from TechDIY.">
+<link rel="canonical" href="https://techdiy.xyz/docker-image-firefox-browser-on-alpine.html">
+<meta name="robots" content="index, follow">
+
 <link rel="icon" type="image/png" sizes="32x32" href="layout/imgs/techDIY-favicon2-32x32.png">
-<link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="layout/style.css" />
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="layout/style.css">
 </head>
 <body>
 	
@@ -15,6 +20,7 @@
 	<span class="nav-hint">| <a href="home.html">home</a></span>
 </div>
 	
+<h1 class="visually-hidden">Run Firefox Browser in Docker on Alpine Linux</h1>
 	
   <div id="terminal">
     <div id="banner-container">
@@ -26,7 +32,7 @@ _______________________________________________
 _______________________________________________
 		</pre>
 		
-<span class="ansi-cyan">Type 'help' to see available commands.</span><br />
+<span class="ansi-cyan">Type 'help' to see available commands.</span><br>
 <span class="hint">You can use some terminal commands to navigate...</span>
 
     </div><!-- /#banner-container -->
@@ -35,7 +41,7 @@ _______________________________________________
 
     <div class="input-line">
       <span class="prompt">guest@techdiy:~$</span>
-      <input type="text" id="input" autofocus autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+      <input type="text" id="input" autofocus autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
     </div>
 
 <!-- Main static content for files/pages -->
@@ -58,7 +64,7 @@ _______________________________________________
 
 	<p>⚠️ <i>Tested on KDE Plasma (Linux). If you encounter issues, you may need to install additional package(s) for your desktop environment. Just follow the error message for guidance. Windows, macOS, and other operating systems have not been tested !_</i></p>
 
-	<hr />
+	<hr>
 	
 	<h3>Usage:</h3>
 
@@ -162,7 +168,7 @@ xhost -local:$(id -un)
 	<p>👣 No need to build the image - just run the script:</p>
 	<code>./run-firefox.sh</code>
 
-	<hr />
+	<hr>
 
 	<h3>💡 Security Considerations:</h3>
 	<p>&bull; This container is designed to run in a sandboxed environment with minimal exposure to the host system.</p>
@@ -171,7 +177,7 @@ xhost -local:$(id -un)
 	<h3>⚠️ Disclaimer:</h3>
 	<p><i>This Docker image is provided <strong>as-is</strong>, without any warranties or guarantees of any kind. Use of this image is <strong>entirely at your own risk</strong>.</i></p>
 	
-	<hr />
+	<hr>
 	
 	<p>🐙 Github: <a href="https://github.com/nkuk377/firefox-alpine-docker" target="_blank" rel="noopener noreferrer">See on Github↗️</a></p>
 	
