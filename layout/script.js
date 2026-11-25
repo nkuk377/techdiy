@@ -12,14 +12,13 @@
 <span class="ansi-green">Available commands:</span>
 <div class="help">
   <b>home</b>      <i>- Main page</i>
-  <b>about</b>     <i>- What is this web site about?</i>
   <b>projects</b>  <i>- View my projects</i>
+  <b>ls</b>        <i>- List page content</i>
   <b>social</b>    <i>- My social links</i>
   <b>email</b>     <i>- Get my email</i>
   <b>clear</b>     <i>- Clear the terminal</i>
 </div>`,
     pwd: `<span class="ansi-cyan">guest@techdiy:${getCurrentPath()}</span>`,
-    about: `<div class="intro"><p>This site is a small collection of custom scripts that might be helpful, mostly for <strong>Linux</strong>, with some <strong>Android ADB tools</strong> and a couple of small <strong>Docker</strong> projects.</p><p>Nothing fancy, just practical stuff: scripts that solve small problems, configs for customising environments, and a few tips gathered along the way. <p>* <i>The content is aimed at advanced users who are comfortable with Linux, Docker, Android, coding, and general system-level tinkering.</i></p><p><strong>** <i>You'll need the basic Linux commands to navigate here...</i></strong></p><p><b><i>...But I am a Windows/Mac user -> <a href="windows-or-mac-users.html">Read here...</a></i></b></p></div>`,
     projects: `<span class="ansi-yellow">
 📁 <b>docker</b>     <i>- My small docker projects</i>
 📁 <b>android</b>    <i>- Some Android scripts..</i>
@@ -176,14 +175,12 @@ function handleCommand(cmd) {
     if (aliases) {
       lsOutput = `<span class="ansi-yellow">`;
       for (const [alias, full] of Object.entries(aliases)) {
-        lsOutput += `📄 <a href="${full}.html">${full}</a> <i>(alias: ${alias})</i>\n`;
+        lsOutput += `📄 <a href="${full}.html">${full}</a> <i>(${alias})</i>\n`;
       }
       /* Adding Tips */
       lsOutput += `</span>
 <span class="ansi-green">Tips:</span>
-<i>Use short aliases (<q>ffd</q>, <q>tor</q>, <q>adb</q>...) present along the file names above with <b class="ansi-purple">'cat'</b> or <b class="ansi-purple">'less'</b> command to open files. 
-For example:
-<b class="ansi-purple">'less &lt;alias&gt;'</b>	→ opens the file etc..
+<i>Use short aliases present along the file names above, with <b class="ansi-purple">'cat'</b> or <b class="ansi-purple">'less'</b> command to open files.
 ..OR you can just click on</i>
 <br />`;
       lsOutput += `</span>`;
