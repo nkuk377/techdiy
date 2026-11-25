@@ -14,6 +14,7 @@
   <b>home</b>      <i>- Main page</i>
   <b>projects</b>  <i>- View my projects</i>
   <b>ls</b>        <i>- List page content</i>
+  <b>cd</b>        <i>- Access folders</i>
   <b>social</b>    <i>- My social links</i>
   <b>email</b>     <i>- Get my email</i>
   <b>clear</b>     <i>- Clear the terminal</i>
@@ -23,10 +24,10 @@
 📁 <b>docker</b>     <i>- My small docker projects</i>
 📁 <b>android</b>    <i>- Some Android scripts..</i>
 📁 <b>linux</b>      <i>- Small scripts for automation etc..</i>
-</span>`,
+<br><i class="hint">💡 Use "cd &lt;folder name&gt;" to access the folders...</i></span>`,
     social: `<span class="ansi-yellow">
-🦊 Gitlab: https://gitlab.com/mark-lab
-🐙 Githab: https://github.com/nkuk377
+🦊 Gitlab: <a href="https://gitlab.com/mark-lab" target="_blank" rel="noopener noreferrer">https://gitlab.com/mark-lab️️↗️</a>
+🐙 Githab: <a href="https://github.com/nkuk377" target="_blank" rel="noopener noreferrer">https://github.com/nkuk377↗️</a>
 </span>`,
     email: `<span class="ansi-cyan">📫 Email: <span class="error">Not present..</span></span>`,
     clear: ''
@@ -167,6 +168,7 @@ function handleCommand(cmd) {
 📁 docker
 📁 android
 📁 linux
+<br><i class="hint">💡 Use "cd &lt;folder name&gt;" to access the folders...</i>
 </span>`;
   } else {
     const page = path.split('/').pop(); // e.g., 'docker.html'
@@ -179,8 +181,7 @@ function handleCommand(cmd) {
       }
       /* Adding Tips */
       lsOutput += `</span>
-<span class="ansi-green">Tips:</span>
-<i>Use short aliases present along the file names above, with <b class="ansi-purple">'cat'</b> or <b class="ansi-purple">'less'</b> command to open files.
+<i>💡 Use short aliases present along the file names above, with <b class="ansi-purple">'cat'</b> or <b class="ansi-purple">'less'</b> command to open files.
 ..OR you can just click on</i>
 <br />`;
       lsOutput += `</span>`;
