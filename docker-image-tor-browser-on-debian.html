@@ -1,12 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
 <title>Tor Browser - Docker image based on Debian</title>
+
+<meta name="description" content="Run Tor Browser in a Docker container on Debian Linux. Explore the setup, configuration and instructions from TechDIY.">
+<link rel="canonical" href="https://techdiy.xyz/docker-image-tor-browser-on-debian.html">
+<meta name="robots" content="index, follow">
+
 <link rel="icon" type="image/png" sizes="32x32" href="layout/imgs/techDIY-favicon2-32x32.png">
-<link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="layout/style.css" />
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="layout/style.css">
 </head>
 <body>
 	
@@ -14,6 +20,8 @@
 	<span class="project-label">📄 docker-image-tor-browser-on-debian</span>
 	<span class="nav-hint">| <a href="home.html">home</a></span>
 </div>
+
+<h1 class="visually-hidden">Run Tor Browser in Docker on Debian Linux</h1>
 		
   <div id="terminal">
     <div id="banner-container">
@@ -26,7 +34,7 @@ _______________________________________________
 _______________________________________________
       </pre>
       
-<span class="ansi-cyan">Type 'help' to see available commands.</span><br />
+<span class="ansi-cyan">Type 'help' to see available commands.</span><br>
 <span class="hint">You can use some terminal commands to navigate...</span>
 
     </div><!-- /#banner-container -->
@@ -35,7 +43,7 @@ _______________________________________________
 
     <div class="input-line">
       <span class="prompt">guest@techdiy:~$</span>
-      <input type="text" id="input" autofocus autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+      <input type="text" id="input" autofocus autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
     </div>
 
 <!-- Main static content for files/pages -->
@@ -56,7 +64,7 @@ Tor Browser is designed to help protect your privacy online by anonymizing your 
 	
 	[?] <i>Why? - If scripts try to pull Tor Browser directly via ISP (clear net) and do NOT use VPN or so - might have an error, as at the time this project was created, Tor Project was refusing users pulling browser via clear net!</i>
 
-	<hr />
+	<hr>
 
 	<h3>Requirements:</h3>
 
@@ -77,7 +85,7 @@ Tor Browser is designed to help protect your privacy online by anonymizing your 
 	<p>👣 Create a folder <q>tor-browser-debian</q></p>
 	<p>👣 Create two files in the same folder: "Dockerfile" & "run-tor-browser.sh" with the code below...</p>
 	
-	<hr />
+	<hr>
 		
 	<fieldset  class="file-block">
 		<legend>Dockerfile:</legend>
@@ -198,7 +206,7 @@ xhost -local:$(id -un)
 	<p>👣 No need to build the image - just run the script:</p>
 	<code>./run-tor-browser.sh</code>
 	
-	<hr />
+	<hr>
 	
 	<h3>💡 Security Considerations:</h3>
 	
@@ -216,7 +224,7 @@ xhost -local:$(id -un)
 	
 	<p>By using this image, you agree that the developer will not be held liable for any consequences or actions that arise from its usage. Please ensure you have reviewed all relevant legal considerations and understand the potential risks involved before deploying or using this image.</p>
 	
-	<hr />
+	<hr>
 	
 	<p>🐙 Github: <a href="https://github.com/nkuk377/tor-browser-debian-docker" target="_blank" rel="noopener noreferrer">See on Github↗️</a></p>
 	
