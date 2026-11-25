@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+    <url>
+        <loc>https://techdiy.xyz/home.html</loc>
+    </url>
+    
+	<url>
+		<loc>https://techdiy.xyz/windows-or-mac-users.html</loc>
+	</url>
+    
+	<url>
+		<loc>https://techdiy.xyz/docker.html</loc>
+	</url>
+
+    <url>
+		<loc>https://techdiy.xyz/docker-image-firefox-browser-on-debian.html</loc>	
+	</url>
+	
+	<url>
+		<loc>https://techdiy.xyz/docker-image-firefox-browser-on-alpine.html</loc>
+	</url>
+	
+	<url>
+		<loc>https://techdiy.xyz/docker-image-tor-browser-on-debian.html</loc>
+	</url>
+	
+	<url>
+		<loc>https://techdiy.xyz/linux.html</loc>
+	</url>
+	
+	<url>
+		<loc>https://techdiy.xyz/malicious-usb-device-detector.html</loc>
+	</url>
+	
+	<url>
+		<loc>https://techdiy.xyz/corrupted-files-finder.html</loc>
+	</url>
+	
+	<url>
+		<loc>https://techdiy.xyz/picture-name-date-time.html</loc>
+	</url>
+	
+	<url>
+		<loc>https://techdiy.xyz/android.html</loc>
+	</url>
+	
+	<url>
+		<loc>https://techdiy.xyz/android-adb-app-uninstaller.html</loc>
+	</url>
+
+</urlset>
